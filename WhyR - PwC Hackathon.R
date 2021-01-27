@@ -111,22 +111,19 @@ dfA   <- data.frame(doc_id = doc_id, text = textA, year = yearA)
 
 
 
-# term_count_a <- freq_terms(texta, 10)
-# term_count_b <- freq_terms(textb, 10)
-# plot(term_count_a)
-# plot(term_count_b)
-
-
+# calculating similarity values of the matched texts
 n_train <- dim(train)[1]
 for(i in 1:n_train){
+  # creating similarity matrix named as "sim_mat" show the calculated similarity values by using Jaro-Jinkler distance of the matched texts. 
   sim_mat <-  data.frame(text_sim = stringsim(dfA[train$ltable_id[i] + 1, ],
                                               dfB[train$rtable_id[i] + 1, ],
                                               method = 'jw'))
   
-  # yılları farklı olan makaleleri ayırmaya yarıyor
-  # sor: eşit mi değil mi
+  # there are some similar titles with different years. sor is a vector indicates that the papers titled similar but in different years.
   sor <- (dfA[train$ltable_id[i] + 1, "year"]) == (dfB[train$rtable_id[i] + 1, "year"])
-  # den: deneme
+  
+  # If the similarity value of a matched text is lower than 0.79, it is labeled as 0: not matched or else in the following if condition.
+  # 0.79 is the cut-value in here. It is calculated 
   if(sim_mat[2,] < 0.79){
     train$predicted[i] <- 0 # benzer değildir.
   }else
