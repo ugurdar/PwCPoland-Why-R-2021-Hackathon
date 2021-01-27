@@ -183,6 +183,7 @@ train$predicted <- proposed_matcher(train = train, dfA = dfA, dfB = dfB, cut_val
 ###############################################################################################################
 # calculating the accuracy of the trained model
 acc <- NULL
+n_train <- dim(train)[1]
 for(i in 1:n_train){
   acc[i] <- train$label[i] == train$predicted[i]
 }
