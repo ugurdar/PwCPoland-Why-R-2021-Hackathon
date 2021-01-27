@@ -18,7 +18,9 @@ tableB <- read.csv("tableB.csv")
 train  <- read.csv("train.csv")
 valid  <- read.csv("valid.csv")
 
-# extract the ids of papers in tableB to "doc_id" vector
+################################################################################################
+# preprocessing of textB
+# extract the ids of the papers in tableB to "doc_id" vector
 doc_id <- tableB[,1]
 
 # merge the title, authors, venue and year column in "textB" vector
@@ -27,7 +29,6 @@ for(i in 1:2294){
   textB[i] <- paste(tableB[i, c(2,3,4,5)], collapse = " ")
 }
 
-# preprocessing of textB
 # replacing NAs resulting from merging in line 27 with space.
 textB  <- str_replace(textB, "NA", " ") 
 
@@ -66,7 +67,9 @@ textB  <- removeNumbers(textB)
 dfB    <- data.frame(doc_id = doc_id, text = textB, year = yearB)
 
 
-
+################################################################################################
+# preprocessing of textA
+# extract the ids of the papers in tableA to "doc_id" vector
 doc_id <- tableA[,1]
 textA <- NULL
 for(i in 1:2616){
@@ -110,59 +113,38 @@ textA <- removeNumbers(textA)
 dfA   <- data.frame(doc_id = doc_id, text = textA, year = yearA)
 
 
-
+################################################################################################
 # calculating similarity values of the matched texts
 n_train <- dim(train)[1]
 for(i in 1:n_train){
-  # creating similarity matrix named as "sim_mat" show the calculated similarity values by using Jaro-Jinkler distance of the matched texts. 
+  # creating similarity matrix named as "sim_mat" show the calculated similarity values by using 
+  # Jaro-Jinkler distance of the matched texts. 
   sim_mat <-  data.frame(text_sim = stringsim(dfA[train$ltable_id[i] + 1, ],
                                               dfB[train$rtable_id[i] + 1, ],
                                               method = 'jw'))
   
-  # there are some similar titles with different years. sor is a vector indicates that the papers titled similar but in different years.
+  # there are some similar titles with different years. sor is a vector indicates that the papers 
+  # titled similar but in different years.
   sor <- (dfA[train$ltable_id[i] + 1, "year"]) == (dfB[train$rtable_id[i] + 1, "year"])
   
-  # If the similarity value of a matched text is lower than 0.79, it is labeled as 0: not matched or else in the following if condition.
-  # 0.79 is the cut-value in here. It is calculated 
+  # If the similarity value of a matched text is lower than 0.79, it is labeled as 0: not matched 
+  # or else in the following if condition. The cut-value is 0.79 in the trained model. 
+  # It is calculated 
   if(sim_mat[2,] < 0.79){
-    train$predicted[i] <- 0 # benzer değildir.
+    train$predicted[i] <- 0 # not matched
   }else
-    train$predicted[i] <- 1 * sor # benzerdir.
+    train$predicted[i] <- 1 * sor # matched. Not matched when sor is 0. 
 }
 
-
-
+################################################################################################
+# calculating the accuracy of the trained model
 acc <- NULL
 for(i in 1:n_train){
   acc[i] <- train$label[i] == train$predicted[i]
 }
 
-#paste("Train set accuracy :",mean(acc))
-
-
-
-# This part more suitable for the data but accuracy is less than stringsim()
-
-
-# n_train <- dim(train)[1]
-# for(i in 1:n_train){
-#   sim_mat <-  seq_dist(hash(strsplit(df_a[i,"text"], "\\s+")), hash(strsplit(df_b[i,"text"], "\\s+")), method = "jaccard", q = 2)
-#   sor <- (df_a[train$ltable_id[i]+1,"year"]) == (df_b[train$rtable_id[i]+1,"year"])
-#   if(sim_mat <0.90){
-#     train$den[i] <- 0
-#   }else
-#     train$den[i] <-1*sor
-# }
-# 
-# acc <- NULL
-# for(i in 1:n_train){
-#   acc[i] <- train$label[i] == train$den[i]
-# }
-# 
-# paste("Train set accuracy :",mean(acc))
-
-
-
+################################################################################################
+# predicting the labels of the valid set
 n_valid <- dim(valid)[1]
 for(i in 1:n_valid){
   sim_mat <-  data.frame(text_sim = stringsim(dfA[valid$ltable_id[i] + 1,],
@@ -174,7 +156,5 @@ for(i in 1:n_valid){
   }else
     valid$predicted[i] <- 1 * sor
 }
-
-#head(valid)
 
 #write.csv(valid,"valid-submission.csv",row.names = FALSE)
