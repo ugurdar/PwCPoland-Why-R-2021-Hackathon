@@ -117,6 +117,8 @@ dfA   <- data.frame(doc_id = doc_id, text = textA, year = yearA)
 # optimal_cut function returns the optimat cut-off value to maximize the accuracy.
 # It searches the optimal cut-off value in the neighborhood of the specified value 
 # obtained from X.
+initial_cut <- summary() #max ve 3rd quantile orta noktası
+
 optimal_cut <- function(cut, step = 0.01){
   options(warn=-1)
   acc_opt <- NULL
