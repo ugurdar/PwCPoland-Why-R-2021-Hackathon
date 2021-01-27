@@ -21,30 +21,50 @@ valid  <- read.csv("valid.csv")
 # extract the ids of papers in tableB to "doc_id" vector
 doc_id <- tableB[,1]
 
-# merge the title, authors, venue and year column in "textb" vector
+# merge the title, authors, venue and year column in "textB" vector
 textB <- NULL
 for(i in 1:2294){
   textB[i] <- paste(tableB[i, c(2,3,4,5)], collapse = " ")
 }
 
-# preprocessing of the text data
-# 
+# preprocessing of textB
+# replacing NAs resulting from merging in line 27 with space.
 textB  <- str_replace(textB, "NA", " ") 
+
+# replacing meaningless letter and short texts with space.
 textB  <- gsub('\\b\\w{1}\\b', '', textB) 
+
+# replacing the term of "approximate", it may cause mismatching because of being in many texts.
 textB  <- str_replace(textB, "approximate"," ")
+
+# replacing the similar terms with unique terms.
 textB  <- str_replace(textB, "acm transactions on database systems ( tods )", "acmsigmodrectrans")
 textB  <- str_replace(textB, "international conference on management of data", "sigmodconference")
 textB  <- str_replace(textB, "acm sigmod record"  , "sigmodrecord")
 textB  <- str_replace(textB, "the vldb journal -- the international journal on very large data bases", "vldbj")
 textB  <- str_replace(textB, "very large data bases", "vldb")
-textB  <- removePunctuation(textB) # nokta ünlem gibi işaretleri siliyor.
+
+# removing punctuations
+textB  <- removePunctuation(textB) 
+
+# converting strings to lowercase in "textB"
 textB  <- tolower(textB)
-textB  <- removeWords(textB, stopwords("en"))#ekleri siliyor.
-textB  <- stripWhitespace(textB) #büyük boşlukları siliyor.
+
+# removing prefix and suffix in "textB"
+textB  <- removeWords(textB, stopwords("en"))
+
+# removing white spaces
+textB  <- stripWhitespace(textB) 
+
+# extracting the years in "textB" to "yearB"
 yearB  <- gsub(".*(199[0-9]|20[01][0-9]).*","\\1", textB)
+
+# removing numbers
 textB  <- removeNumbers(textB)
+
+# creating dfB data.frame consists id, text and year.
 dfB    <- data.frame(doc_id = doc_id, text = textB, year = yearB)
-#head(df_b)
+
 
 
 doc_id <- tableA[,1]
@@ -53,21 +73,42 @@ for(i in 1:2616){
   textA[i] <- paste(tableA[i, c(2,3,4,5)], collapse = " ")
 }
 
+# replacing NAs resulting from merging in line 73 with space.
 textA <- str_replace(textA, "NA", " ")
+
+# replacing meaningless letter and short texts with space.
 textA <- gsub('\\b\\w{1}\\b', '', textA) 
+
+# replacing the term of "approximate", it may cause mismatching because of being in many texts.
 textA <- str_replace(textA, "approximate", " ")
+
+# replacing the similar terms with unique terms.
 textA <- str_replace(textA, "acm trans . database syst .", "acmsigmodrectrans")
 textA <- str_replace(textA, "sigmod conference", "sigmodconference")
 textA <- str_replace(textA, "sigmod record", "sigmodrecord")
 textA <- str_replace(textA, "vldb j.", "vldbj")
-textA <- removePunctuation(textA) # nokta ünlem gibi işaretleri siliyor.
+
+# removing punctuations
+textA <- removePunctuation(textA) 
+
+# converting strings to lowercase in "textA"
 textA <- tolower(textA)
-textA <- removeWords(textA, stopwords("en"))#ekleri siliyor.
+
+# removing prefix and suffix in "textA"
+textA <- removeWords(textA, stopwords("en"))
+
+# removing white spaces in "textA"
 textA <- stripWhitespace(textA) #büyük boşlukları siliyor.
+
+# extracting the years in "textA" to "yearA"
 yearA <- gsub(".*(199[0-9]|20[01][0-9]).*","\\1", textA)
+
+# removing numbers in "textA"
 textA <- removeNumbers(textA)
+
+# creating dfA data.frame consists id, text and year.
 dfA   <- data.frame(doc_id = doc_id, text = textA, year = yearA)
-#head(df_a)
+
 
 
 # term_count_a <- freq_terms(texta, 10)
