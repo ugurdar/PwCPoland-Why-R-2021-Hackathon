@@ -166,10 +166,10 @@ for(i in 1:dim(dfB)[1]){
 }
 initial_cut <- mean(c(max(sim_vec,na.rm =TRUE) ,quantile(sim_vec, 0.75, na.rm = TRUE)))
 
-# obtaining optimal cut value assigned to "opt_cut_value" is 0.79.
+# obtaining optimal cut value assigned to "opt_cut_value" is 0.7920119.
 opt_cut_value <- optimal_cut(initial_cut)
 # opt_cut_value  
-# [1] 0.79
+# [1] 0.7920119
 
 ###############################################################################################################
 # This is our novel approach based on the optimal cut value given in above. It classifies the texts are
