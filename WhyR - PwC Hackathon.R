@@ -120,7 +120,14 @@ dfA   <- data.frame(doc_id = doc_id, text = textA, year = yearA)
 optimal_cut <- function(cut, step = 0.01){
   options(warn=-1)
   acc_opt <- NULL
-  cut <- c(cut - 2 * step, cut - step, cut, cut + step, cut + 2 * step)
+  cut <- c(cut - 3 * step,
+           cut - 2 * step, 
+           cut - step, 
+           cut, 
+           cut + step, 
+           cut + 2 * step,
+           cut + 3 * step)
+  
   for(j in 1:length(cut)){
     k <- cut[j]
     n_train <- dim(train)[1]
