@@ -19,6 +19,7 @@ library(tm)
 library(stringdist)
 library(magrittr)
 library(hashr)
+library(MLmetrics)
 
 # importing data from csv files
 tableA <- read.csv("tableA.csv")
@@ -218,7 +219,8 @@ for(i in 1:n_train){
 }
 # paste("Accuracy on Train Set: ", mean(acc))
 # [1] "Accuracy on Train Set:  0.991101523527033"
-
+#> F1_Score(train$label, train$predicted, positive = NULL)
+# [1] 0.9946524
 ###############################################################################################################
 # predicting the labels of the valid set
 n_valid <- dim(valid)[1]
