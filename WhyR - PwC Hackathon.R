@@ -153,6 +153,8 @@ optimal_cut <- function(cut, step = 0.01){
 
 opt_cut_value <- optimal_cut(0.80)
 ###############################################################################################################
+# This is our novel approach based on the optimal cut value given in above. It classifies the texts are
+# matched or not matched according to the cut-off value.
 proposed_matcher <- function(train, dfA, dfB, cut_value){
   n_train <- dim(train)[1]
   for(i in 1:n_train){
@@ -177,14 +179,14 @@ proposed_matcher <- function(train, dfA, dfB, cut_value){
     return(train$predicted)
 }
 
-train$predicted <- proposed_matcher(train = train, dfA = dfA, dfB = dfB, cut_value = opt_cut_calue)
+train$predicted <- proposed_matcher(train = train, dfA = dfA, dfB = dfB, cut_value = opt_cut_value)
 ###############################################################################################################
 # calculating the accuracy of the trained model
 acc <- NULL
 for(i in 1:n_train){
   acc[i] <- train$label[i] == train$predicted[i]
 }
-#paste("Train Accuracy :",acc)
+
 ###############################################################################################################
 # predicting the labels of the valid set
 n_valid <- dim(valid)[1]
