@@ -1,8 +1,8 @@
-# -------------------------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------------------------------------
 # Jan 27, 2021
 # Script of whyR-PwC Hackathon:
 # The challenge is matching name of academic papers in different format.
-# -------------------------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------------------------------------
 # Verify the packages
 library(readr)
 library(stringr)
@@ -18,7 +18,7 @@ tableB <- read.csv("tableB.csv")
 train  <- read.csv("train.csv")
 valid  <- read.csv("valid.csv")
 
-################################################################################################
+###############################################################################################################
 # preprocessing of textB
 # extract the ids of the papers in tableB to "doc_id" vector
 doc_id <- tableB[,1]
@@ -67,7 +67,7 @@ textB  <- removeNumbers(textB)
 dfB    <- data.frame(doc_id = doc_id, text = textB, year = yearB)
 
 
-################################################################################################
+###############################################################################################################
 # preprocessing of textA
 # extract the ids of the papers in tableA to "doc_id" vector
 doc_id <- tableA[,1]
@@ -113,7 +113,7 @@ textA <- removeNumbers(textA)
 dfA   <- data.frame(doc_id = doc_id, text = textA, year = yearA)
 
 
-################################################################################################
+###############################################################################################################
 # calculating similarity values of the matched texts
 n_train <- dim(train)[1]
 for(i in 1:n_train){
@@ -136,14 +136,14 @@ for(i in 1:n_train){
     train$predicted[i] <- 1 * sor # matched. Not matched when sor is 0. 
 }
 
-################################################################################################
+###############################################################################################################
 # calculating the accuracy of the trained model
 acc <- NULL
 for(i in 1:n_train){
   acc[i] <- train$label[i] == train$predicted[i]
 }
 
-################################################################################################
+###############################################################################################################
 # predicting the labels of the valid set
 n_valid <- dim(valid)[1]
 for(i in 1:n_valid){
