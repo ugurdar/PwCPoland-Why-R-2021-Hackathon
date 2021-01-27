@@ -117,16 +117,17 @@ dfA   <- data.frame(doc_id = doc_id, text = textA, year = yearA)
 # optimal_cut function returns the optimat cut-off value to maximize the accuracy.
 # It searches the optimal cut-off value in the neighborhood of the specified value 
 # obtained from X.
-deger <- NULL
+sim_vec <- NULL
 for(i in 1:dim(dfB)[1]){
-    deger[i] <- stringsim(dfA[train[which(train$label == 1),1][i],2], dfB[train[which(train$label == 1),1][i],2], method ='jw')
-    
+    sim_vec[i] <- stringsim(dfA[train[which(train$label == 1),1][i], 2], 
+                            dfB[train[which(train$label == 1),1][i], 2], 
+                            method ='jw')
 }
-
-initial_cut <- summary() #max ve 3rd quantile orta noktası
+initial_cut <- summary(mean(max(sim_vec), quantile(sim_vec, 0.75, na.rm = TRUE))) 
+#max ve 3rd quantile orta noktası
 
 optimal_cut <- function(cut, step = 0.01){
-  options(warn=-1)
+  options(warn = -1)
   acc_opt <- NULL
   cut <- c(cut - 3 * step,
            cut - 2 * step, 
@@ -159,8 +160,9 @@ optimal_cut <- function(cut, step = 0.01){
   return(opt_cuts$Cutoff[opt_cuts$Accuracy == max(opt_cuts$Accuracy)])
  #return(max(opt_cuts$Accuracy))
 }
-#acc <- sapply(c(#cutoff interval#),optimal_cut)
-
+#acc <- sapply(c(0.75,0.8),optimal_cut)
+#
+#opt_cut_value <-
 opt_cut_value <- optimal_cut(0.80)
 ###############################################################################################################
 # This is our novel approach based on the optimal cut value given in above. It classifies the texts are
