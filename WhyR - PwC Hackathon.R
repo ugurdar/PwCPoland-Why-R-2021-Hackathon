@@ -219,7 +219,7 @@ for(i in 1:n_train){
 }
 # paste("Accuracy on Train Set: ", mean(acc))
 # [1] "Accuracy on Train Set:  0.991101523527033"
-#> F1_Score(train$label, train$predicted, positive = NULL)
+# F1_Score(train$label, train$predicted, positive = NULL)
 # [1] 0.9946524
 ###############################################################################################################
 # predicting the labels of the valid set
