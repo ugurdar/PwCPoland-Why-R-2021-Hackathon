@@ -187,6 +187,8 @@ n_train <- dim(train)[1]
 for(i in 1:n_train){
   acc[i] <- train$label[i] == train$predicted[i]
 }
+#paste("Accuracy on Train Set: ", mean(acc))
+
 
 ###############################################################################################################
 # predicting the labels of the valid set
