@@ -66,7 +66,6 @@ textB  <- removeNumbers(textB)
 # creating dfB data.frame consists id, text and year.
 dfB    <- data.frame(doc_id = doc_id, text = textB, year = yearB)
 
-
 ###############################################################################################################
 # preprocessing of textA
 # extract the ids of the papers in tableA to "doc_id" vector
@@ -112,18 +111,11 @@ textA <- removeNumbers(textA)
 # creating dfA data.frame consists id, text and year.
 dfA   <- data.frame(doc_id = doc_id, text = textA, year = yearA)
 
-
 ###############################################################################################################
 # optimal_cut function returns the optimal cut-off value to maximize the accuracy.
 # It searches the optimal cut-off value in the neighborhood of the specified value 
 # obtained from X.
-sim_vec <- NULL
-for(i in 1:dim(dfB)[1]){
-    sim_vec[i] <- stringsim(dfA[train[which(train$label == 1),1][i], 2], 
-                            dfB[train[which(train$label == 1),1][i], 2], 
-                            method ='jw')
-}
-initial_cut <- summary(mean(max(sim_vec), quantile(sim_vec, 0.75, na.rm = TRUE))) 
+
 #max ve 3rd quantile orta noktası
 
 optimal_cut <- function(cut, step = 0.01){
@@ -161,9 +153,24 @@ optimal_cut <- function(cut, step = 0.01){
  #return(max(opt_cuts$Accuracy))
 }
 #acc <- sapply(c(0.75,0.8),optimal_cut)
-#
-#opt_cut_value <-
-opt_cut_value <- optimal_cut(0.80)
+
+###############################################################################################################
+# choosing initial cut value
+# the initial cut value is obtained by using the summary statistics of the similarity values of 
+# true matched texts. It is the midpoint of 3rd quantile and maximum value.
+sim_vec <- NULL
+for(i in 1:dim(dfB)[1]){
+    sim_vec[i] <- stringsim(dfA[train[which(train$label == 1),1][i], 2], 
+                            dfB[train[which(train$label == 1),1][i], 2], 
+                            method ='jw')
+}
+initial_cut <- summary(mean(max(sim_vec), quantile(sim_vec, 0.75, na.rm = TRUE))) 
+
+# obtaining optimal cut value assigned to "opt_cut_value" is 0.79.
+opt_cut_value <- optimal_cut(initial_cut)
+# opt_cut_value  
+# [1] 0.79
+
 ###############################################################################################################
 # This is our novel approach based on the optimal cut value given in above. It classifies the texts are
 # matched or not matched according to the cut-off value.
@@ -191,7 +198,9 @@ proposed_matcher <- function(train, dfA, dfB, cut_value){
     return(train$predicted)
 }
 
+# predicted labels from the proposed_matcher() function assigns to "train$predicted"
 train$predicted <- proposed_matcher(train = train, dfA = dfA, dfB = dfB, cut_value = opt_cut_value)
+
 ###############################################################################################################
 # calculating the accuracy of the trained model
 acc <- NULL
@@ -199,8 +208,8 @@ n_train <- dim(train)[1]
 for(i in 1:n_train){
   acc[i] <- train$label[i] == train$predicted[i]
 }
-#paste("Accuracy on Train Set: ", mean(acc))
-
+# paste("Accuracy on Train Set: ", mean(acc))
+# [1] "Accuracy on Train Set:  0.991101523527033"
 
 ###############################################################################################################
 # predicting the labels of the valid set
@@ -210,7 +219,7 @@ for(i in 1:n_valid){
                                               dfA[valid$rtable_id[i] + 1,2],
                                               method = 'jw'))
   sor <- (dfA[valid$ltable_id[i] + 1, "year"]) == (dfB[valid$rtable_id[i] + 1, "year"])
-  if(sim_mat < 0.79){
+  if(sim_mat < opt_cut_value){
     valid$predicted[i] <- 0
   }else
     valid$predicted[i] <- 1 * sor
