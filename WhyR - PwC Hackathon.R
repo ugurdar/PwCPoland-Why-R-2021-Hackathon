@@ -18,42 +18,31 @@ tableb <- read.csv("tableB.csv")
 train  <- read.csv("train.csv")
 valid  <- read.csv("valid.csv")
 
-
-#matched <- train[which(train$label == 1),]
-
-#ilkon_a <- matched[1:10,1]
-#ilkon_b <- matched[1:10,2] 
-
-#for(i in 21:30){
-#  r <-rbind(tablea[which(tablea$id == ilkon_a[i]),],tableb[which(tableb$id == ilkon_b[i]),])
-#  print(r)
-#}
-
-
-#levels(factor(tablea$venue))
-#levels(factor(tableb$venue))
-
-
+# extract the ids of papers in tableB to "doc_id" vector
 doc_id <- tableb[,1]
+
+# merge the title, authors, venue and year column in "textb" vector
 textb <- NULL
 for(i in 1:2294){
   textb[i] <- paste(tableb[i, c(2,3,4,5)], collapse = " ")
 }
-textb <- str_replace(textb, "NA", " ")
-textb <- gsub('\\b\\w{1}\\b', '', textb)
-textb <- str_replace(textb, "approximate"," ")
-textb <- str_replace(textb, "acm transactions on database systems ( tods )", "acmsigmodrectrans")
-textb <- str_replace(textb, "international conference on management of data", "sigmodconference")
-textb <- str_replace(textb, "acm sigmod record"  , "sigmodrecord")
-textb <- str_replace(textb, "the vldb journal -- the international journal on very large data bases", "vldbj")
-textb <- str_replace(textb, "very large data bases", "vldb")
-textb <- removePunctuation(textb) # nokta ünlem gibi işaretleri siliyor.
-textb <- tolower(textb)
-textb <- removeWords(textb, stopwords("en"))#ekleri siliyor.
-textb <- stripWhitespace(textb) #büyük boşlukları siliyor.
+
+# 
+textb  <- str_replace(textb, "NA", " ")
+textb  <- gsub('\\b\\w{1}\\b', '', textb)
+textb  <- str_replace(textb, "approximate"," ")
+textb  <- str_replace(textb, "acm transactions on database systems ( tods )", "acmsigmodrectrans")
+textb  <- str_replace(textb, "international conference on management of data", "sigmodconference")
+textb  <- str_replace(textb, "acm sigmod record"  , "sigmodrecord")
+textb  <- str_replace(textb, "the vldb journal -- the international journal on very large data bases", "vldbj")
+textb  <- str_replace(textb, "very large data bases", "vldb")
+textb  <- removePunctuation(textb) # nokta ünlem gibi işaretleri siliyor.
+textb  <- tolower(textb)
+textb  <- removeWords(textb, stopwords("en"))#ekleri siliyor.
+textb  <- stripWhitespace(textb) #büyük boşlukları siliyor.
 year_b <- gsub(".*(199[0-9]|20[01][0-9]).*","\\1", textb)
-textb <- removeNumbers(textb)
-df_b <- data.frame(doc_id = doc_id, text = textb, year = year_b)
+textb  <- removeNumbers(textb)
+df_b   <- data.frame(doc_id = doc_id, text = textb, year = year_b)
 #head(df_b)
 
 
