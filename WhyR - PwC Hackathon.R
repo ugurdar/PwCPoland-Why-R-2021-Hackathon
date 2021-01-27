@@ -1,4 +1,9 @@
-#setwd("C:/Users/gr/Desktop/data_hackathon")
+# -------------------------------------------------------------------------------------------------
+# Jan 27, 2021
+# Script of whyR-PwC Hackathon:
+# The challenge is matching name of academic papers in different format.
+# -------------------------------------------------------------------------------------------------
+# Verify the packages
 library(readr)
 library(stringr)
 library(qdap)
@@ -7,13 +12,11 @@ library(stringdist)
 library(magrittr)
 library(hashr)
 
-
-
+# importing data from csv files
 tablea <- read.csv("tableA.csv")
 tableb <- read.csv("tableB.csv")
-train <- read.csv("train.csv")
-valid <- read.csv("valid.csv")
-
+train  <- read.csv("train.csv")
+valid  <- read.csv("valid.csv")
 
 
 matched <- train[which(train$label == 1),]
