@@ -13,8 +13,8 @@ library(magrittr)
 library(hashr)
 
 # importing data from csv files
-tablea <- read.csv("tableA.csv")
-tableb <- read.csv("tableB.csv")
+tableA <- read.csv("tableA.csv")
+tableB <- read.csv("tableB.csv")
 train  <- read.csv("train.csv")
 valid  <- read.csv("valid.csv")
 
@@ -27,29 +27,30 @@ for(i in 1:2294){
   textb[i] <- paste(tableb[i, c(2,3,4,5)], collapse = " ")
 }
 
+# preprocessing of the text data
 # 
-textb  <- str_replace(textb, "NA", " ")
-textb  <- gsub('\\b\\w{1}\\b', '', textb)
-textb  <- str_replace(textb, "approximate"," ")
-textb  <- str_replace(textb, "acm transactions on database systems ( tods )", "acmsigmodrectrans")
-textb  <- str_replace(textb, "international conference on management of data", "sigmodconference")
-textb  <- str_replace(textb, "acm sigmod record"  , "sigmodrecord")
-textb  <- str_replace(textb, "the vldb journal -- the international journal on very large data bases", "vldbj")
-textb  <- str_replace(textb, "very large data bases", "vldb")
-textb  <- removePunctuation(textb) # nokta ünlem gibi işaretleri siliyor.
-textb  <- tolower(textb)
-textb  <- removeWords(textb, stopwords("en"))#ekleri siliyor.
-textb  <- stripWhitespace(textb) #büyük boşlukları siliyor.
-year_b <- gsub(".*(199[0-9]|20[01][0-9]).*","\\1", textb)
-textb  <- removeNumbers(textb)
-df_b   <- data.frame(doc_id = doc_id, text = textb, year = year_b)
+textB  <- str_replace(textb, "NA", " ") 
+textB  <- gsub('\\b\\w{1}\\b', '', textb) 
+textB  <- str_replace(textb, "approximate"," ")
+textB  <- str_replace(textb, "acm transactions on database systems ( tods )", "acmsigmodrectrans")
+textB  <- str_replace(textb, "international conference on management of data", "sigmodconference")
+textB  <- str_replace(textb, "acm sigmod record"  , "sigmodrecord")
+textB  <- str_replace(textb, "the vldb journal -- the international journal on very large data bases", "vldbj")
+textB  <- str_replace(textb, "very large data bases", "vldb")
+textB  <- removePunctuation(textb) # nokta ünlem gibi işaretleri siliyor.
+textB  <- tolower(textb)
+textB  <- removeWords(textb, stopwords("en"))#ekleri siliyor.
+textB  <- stripWhitespace(textb) #büyük boşlukları siliyor.
+yearB  <- gsub(".*(199[0-9]|20[01][0-9]).*","\\1", textb)
+textB  <- removeNumbers(textb)
+dfB    <- data.frame(doc_id = doc_id, text = textb, year = year_b)
 #head(df_b)
 
 
 doc_id <- tablea[,1]
 texta <- NULL
 for(i in 1:2616){
-  texta[i] <- paste(tablea[i,c(2,3,4,5)], collapse = " ")
+  texta[i] <- paste(tablea[i, c(2,3,4,5)], collapse = " ")
 }
 
 texta <- str_replace(texta, "NA", " ")
@@ -77,14 +78,18 @@ df_a <- data.frame(doc_id = doc_id, text = texta, year = year_a)
 
 n_train <- dim(train)[1]
 for(i in 1:n_train){
-  sim_mat <-  data.frame(text_sim = stringsim(df_a[train$ltable_id[i]+1, ],
-                                              df_b[train$rtable_id[i]+1, ],
+  sim_mat <-  data.frame(text_sim = stringsim(df_a[train$ltable_id[i] + 1, ],
+                                              df_b[train$rtable_id[i] + 1, ],
                                               method = 'jw'))
+  
+  # yılları farklı olan makaleleri ayırmaya yarıyor
+  # sor: eşit mi değil mi
   sor <- (df_a[train$ltable_id[i] + 1, "year"]) == (df_b[train$rtable_id[i] + 1, "year"])
+  # den: deneme
   if(sim_mat[2,] < 0.79){
-    train$den[i] <- 0
+    train$den[i] <- 0 # benzer değildir.
   }else
-    train$den[i] <- 1 * sor
+    train$den[i] <- 1 * sor # benzerdir.
 }
 
 
@@ -122,8 +127,8 @@ for(i in 1:n_train){
 
 n_valid <- dim(valid)[1]
 for(i in 1:n_valid){
-  sim_mat <-  data.frame(text_sim = stringsim(df_a[valid$ltable_id[i]+1,],
-                                              df_b[valid$rtable_id[i]+1,],
+  sim_mat <-  data.frame(text_sim = stringsim(df_a[valid$ltable_id[i] + 1,],
+                                              df_b[valid$rtable_id[i] + 1,],
                                               method = 'jw'))
   sor <- (df_a[valid$ltable_id[i] + 1, "year"]) == (df_b[valid$rtable_id[i] + 1, "year"])
   if(sim_mat[2,] < 0.79){
