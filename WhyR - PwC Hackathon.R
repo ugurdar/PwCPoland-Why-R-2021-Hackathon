@@ -117,6 +117,12 @@ dfA   <- data.frame(doc_id = doc_id, text = textA, year = yearA)
 # optimal_cut function returns the optimat cut-off value to maximize the accuracy.
 # It searches the optimal cut-off value in the neighborhood of the specified value 
 # obtained from X.
+deger <- NULL
+for(i in 1:dim(dfB)[1]){
+    deger[i] <- stringsim(dfA[train[which(train$label == 1),1][i],2], dfB[train[which(train$label == 1),1][i],2], method ='jw')
+    
+}
+
 initial_cut <- summary() #max ve 3rd quantile orta noktası
 
 optimal_cut <- function(cut, step = 0.01){
