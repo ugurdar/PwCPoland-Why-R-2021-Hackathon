@@ -19,15 +19,15 @@ train  <- read.csv("train.csv")
 valid  <- read.csv("valid.csv")
 
 
-matched <- train[which(train$label == 1),]
+#matched <- train[which(train$label == 1),]
 
-ilkon_a <- matched[1:10,1]
-ilkon_b <- matched[1:10,2] 
+#ilkon_a <- matched[1:10,1]
+#ilkon_b <- matched[1:10,2] 
 
-for(i in 21:30){
-  r <-rbind(tablea[which(tablea$id == ilkon_a[i]),],tableb[which(tableb$id == ilkon_b[i]),])
-  print(r)
-}
+#for(i in 21:30){
+#  r <-rbind(tablea[which(tablea$id == ilkon_a[i]),],tableb[which(tableb$id == ilkon_b[i]),])
+#  print(r)
+#}
 
 
 #levels(factor(tablea$venue))
@@ -37,46 +37,46 @@ for(i in 21:30){
 doc_id <- tableb[,1]
 textb <- NULL
 for(i in 1:2294){
-  textb[i] <- paste(tableb[i,c(2,3,4,5)],collapse=" ")
+  textb[i] <- paste(tableb[i, c(2,3,4,5)], collapse = " ")
 }
-textb <- str_replace(textb,"NA"," ")
-textb <- gsub('\\b\\w{1}\\b','',textb)
-textb <- str_replace(textb,"approximate"," ")
-textb <- str_replace(textb, "acm transactions on database systems ( tods )","acmsigmodrectrans")
-textb <- str_replace(textb,"international conference on management of data","sigmodconference")
-textb <- str_replace(textb,"acm sigmod record"  ,"sigmodrecord")
-textb <- str_replace(textb,"the vldb journal -- the international journal on very large data bases","vldbj")
-textb <- str_replace(textb,"very large data bases","vldb")
+textb <- str_replace(textb, "NA", " ")
+textb <- gsub('\\b\\w{1}\\b', '', textb)
+textb <- str_replace(textb, "approximate"," ")
+textb <- str_replace(textb, "acm transactions on database systems ( tods )", "acmsigmodrectrans")
+textb <- str_replace(textb, "international conference on management of data", "sigmodconference")
+textb <- str_replace(textb, "acm sigmod record"  , "sigmodrecord")
+textb <- str_replace(textb, "the vldb journal -- the international journal on very large data bases", "vldbj")
+textb <- str_replace(textb, "very large data bases", "vldb")
 textb <- removePunctuation(textb) # nokta ünlem gibi işaretleri siliyor.
 textb <- tolower(textb)
 textb <- removeWords(textb, stopwords("en"))#ekleri siliyor.
 textb <- stripWhitespace(textb) #büyük boşlukları siliyor.
-year_b <- gsub(".*(199[0-9]|20[01][0-9]).*","\\1",textb)
+year_b <- gsub(".*(199[0-9]|20[01][0-9]).*","\\1", textb)
 textb <- removeNumbers(textb)
-df_b <- data.frame(doc_id = doc_id, text = textb,year=year_b)
+df_b <- data.frame(doc_id = doc_id, text = textb, year = year_b)
 #head(df_b)
 
 
 doc_id <- tablea[,1]
 texta <- NULL
 for(i in 1:2616){
-  texta[i] <- paste(tablea[i,c(2,3,4,5)],collapse=" ")
+  texta[i] <- paste(tablea[i,c(2,3,4,5)], collapse = " ")
 }
 
-texta <- str_replace(texta,"NA"," ")
-texta <- gsub('\\b\\w{1}\\b','',texta) 
-texta <- str_replace(texta,"approximate"," ")
-texta <- str_replace(texta, "acm trans . database syst .","acmsigmodrectrans")
-texta <- str_replace(texta,"sigmod conference","sigmodconference")
-texta <- str_replace(texta,"sigmod record"  ,"sigmodrecord")
-texta <- str_replace(texta,"vldb j.","vldbj")
+texta <- str_replace(texta, "NA", " ")
+texta <- gsub('\\b\\w{1}\\b', '', texta) 
+texta <- str_replace(texta, "approximate", " ")
+texta <- str_replace(texta, "acm trans . database syst .", "acmsigmodrectrans")
+texta <- str_replace(texta, "sigmod conference", "sigmodconference")
+texta <- str_replace(texta, "sigmod record", "sigmodrecord")
+texta <- str_replace(texta, "vldb j.", "vldbj")
 texta <- removePunctuation(texta) # nokta ünlem gibi işaretleri siliyor.
 texta <- tolower(texta)
 texta <- removeWords(texta, stopwords("en"))#ekleri siliyor.
 texta <- stripWhitespace(texta) #büyük boşlukları siliyor.
-year_a <- gsub(".*(199[0-9]|20[01][0-9]).*","\\1",texta)
+year_a <- gsub(".*(199[0-9]|20[01][0-9]).*","\\1", texta)
 texta <- removeNumbers(texta)
-df_a <- data.frame(doc_id = doc_id, text = texta,year=year_a)
+df_a <- data.frame(doc_id = doc_id, text = texta, year = year_a)
 #head(df_a)
 
 
@@ -88,14 +88,14 @@ df_a <- data.frame(doc_id = doc_id, text = texta,year=year_a)
 
 n_train <- dim(train)[1]
 for(i in 1:n_train){
-  sim_mat <-  data.frame(text_sim   = stringsim(df_a[train$ltable_id[i]+1,],
-                                                df_b[train$rtable_id[i]+1,],
-                                                method = 'jw'))
-  sor <- (df_a[train$ltable_id[i]+1,"year"]) == (df_b[train$rtable_id[i]+1,"year"])
-  if(sim_mat[2,] <0.79){
+  sim_mat <-  data.frame(text_sim = stringsim(df_a[train$ltable_id[i]+1, ],
+                                              df_b[train$rtable_id[i]+1, ],
+                                              method = 'jw'))
+  sor <- (df_a[train$ltable_id[i] + 1, "year"]) == (df_b[train$rtable_id[i] + 1, "year"])
+  if(sim_mat[2,] < 0.79){
     train$den[i] <- 0
   }else
-    train$den[i] <-1*sor
+    train$den[i] <- 1 * sor
 }
 
 
@@ -133,14 +133,14 @@ for(i in 1:n_train){
 
 n_valid <- dim(valid)[1]
 for(i in 1:n_valid){
-  sim_mat <-  data.frame(text_sim   = stringsim(df_a[valid$ltable_id[i]+1,],
-                                                df_b[valid$rtable_id[i]+1,],
-                                                method = 'jw'))
-  sor <- (df_a[valid$ltable_id[i]+1,"year"]) == (df_b[valid$rtable_id[i]+1,"year"])
-  if(sim_mat[2,] <0.79){
+  sim_mat <-  data.frame(text_sim = stringsim(df_a[valid$ltable_id[i]+1,],
+                                              df_b[valid$rtable_id[i]+1,],
+                                              method = 'jw'))
+  sor <- (df_a[valid$ltable_id[i] + 1, "year"]) == (df_b[valid$rtable_id[i] + 1, "year"])
+  if(sim_mat[2,] < 0.79){
     valid$label[i] <- 0
   }else
-    valid$label[i] <-1*sor
+    valid$label[i] <- 1 * sor
 }
 
 #head(valid)
