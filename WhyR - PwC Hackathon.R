@@ -114,6 +114,34 @@ dfA   <- data.frame(doc_id = doc_id, text = textA, year = yearA)
 
 
 ###############################################################################################################
+optimal_cut <- function(cut, step = 0.01){
+  options(warn=-1)
+  acc_opt <- NULL
+  cut <- c(cut - 2 * step, cut - step, cut, cut + step, cut + 2 * step)
+  for(j in 1:length(cut)){
+    k <- cut[j]
+    n_train <- dim(train)[1]
+    for(i in 1:n_train){
+      sim_mat <-  data.frame(text_sim = stringsim(dfA[train$ltable_id[i]+1,],
+                                                  dfB[train$rtable_id[i]+1,],
+                                                  method = 'jw'))
+      sor <- (dfA[train$ltable_id[i] + 1, "year"]) == (dfB[train$rtable_id[i] + 1, "year"])
+      if(sim_mat[2,] < k){
+        train$predicted[i] <- 0
+      }else
+        train$predicted[i] <- 1 * sor
+    }
+    acc <- NULL
+    for(i in 1:n_train){
+      acc[i] <- train$label[i] == train$predicted[i]
+    }
+    acc_opt[j] <- mean(acc)
+  }
+  opt_cuts <- data.frame(Cutoff = cut, Accuracy = acc_opt)
+  return(opt_cuts$Cutoff[opt_cuts$Accuracy == max(opt_cuts$Accuracy)])
+}
+
+
 # calculating similarity values of the matched texts
 n_train <- dim(train)[1]
 for(i in 1:n_train){
@@ -126,7 +154,7 @@ for(i in 1:n_train){
   # there are some similar titles with different years. sor is a vector indicates that the papers 
   # titled similar but in different years.
   sor <- (dfA[train$ltable_id[i] + 1, "year"]) == (dfB[train$rtable_id[i] + 1, "year"])
-  
+ 
   # If the similarity value of a matched text is lower than 0.79, it is labeled as 0: not matched 
   # or else in the following if condition. The cut-value is 0.79 in the trained model. 
   # It is calculated 
