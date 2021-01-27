@@ -164,7 +164,7 @@ for(i in 1:dim(dfB)[1]){
                             dfB[train[which(train$label == 1),1][i], 2], 
                             method ='jw')
 }
-initial_cut <- summary(mean(max(sim_vec), quantile(sim_vec, 0.75, na.rm = TRUE))) 
+initial_cut <- mean(c(max(sim_vec,na.rm =TRUE) ,quantile(sim_vec, 0.75, na.rm = TRUE)))
 
 # obtaining optimal cut value assigned to "opt_cut_value" is 0.79.
 opt_cut_value <- optimal_cut(initial_cut)
