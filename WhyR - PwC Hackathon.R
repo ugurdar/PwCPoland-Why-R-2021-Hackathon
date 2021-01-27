@@ -3,6 +3,14 @@
 # Script of whyR-PwC Hackathon:
 # The challenge is matching name of academic papers in different format.
 # ------------------------------------------------------------------------------------------------------------
+# Motivation:
+#
+# Our motivation is to propose new classifier method to maximize accuracy based on optimal cut-off value 
+# approach. The optimal cut-value is obtained by a search algorithm is "optimal_cut". It needs a initial value 
+# and it is obtained from the summary statistics of the similarity values of true matched texts in train set. 
+# After obtained the optimal cut value, the proposed classifier proposed_matcher() function returns the labels 
+# of the texts considered to be similar. The accuracy of our proposed method is 0.9912 for train set.
+# ------------------------------------------------------------------------------------------------------------
 # Verify the packages
 library(readr)
 library(stringr)
