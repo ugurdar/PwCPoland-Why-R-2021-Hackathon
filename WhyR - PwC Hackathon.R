@@ -114,6 +114,9 @@ dfA   <- data.frame(doc_id = doc_id, text = textA, year = yearA)
 
 
 ###############################################################################################################
+# optimal_cut function returns the optimat cut-off value to maximize the accuracy.
+# It searches the optimal cut-off value in the neighborhood of the specified value 
+# obtained from X.
 optimal_cut <- function(cut, step = 0.01){
   options(warn=-1)
   acc_opt <- NULL
@@ -141,7 +144,7 @@ optimal_cut <- function(cut, step = 0.01){
   return(opt_cuts$Cutoff[opt_cuts$Accuracy == max(opt_cuts$Accuracy)])
 }
 
-
+###############################################################################################################
 # calculating similarity values of the matched texts
 n_train <- dim(train)[1]
 for(i in 1:n_train){
