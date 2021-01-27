@@ -132,11 +132,11 @@ optimal_cut <- function(cut, step = 0.01){
     k <- cut[j]
     n_train <- dim(train)[1]
     for(i in 1:n_train){
-      sim_mat <-  data.frame(text_sim = stringsim(dfA[train$ltable_id[i]+1,],
-                                                  dfB[train$rtable_id[i]+1,],
+      sim_mat <-  data.frame(text_sim = stringsim(dfA[train$ltable_id[i]+1,2],
+                                                  dfB[train$rtable_id[i]+1,2],
                                                   method = 'jw'))
       sor <- (dfA[train$ltable_id[i] + 1, "year"]) == (dfB[train$rtable_id[i] + 1, "year"])
-      if(sim_mat[2,] < k){
+      if(sim_mat < k){
         train$predicted[i] <- 0
       }else
         train$predicted[i] <- 1 * sor
@@ -149,8 +149,11 @@ optimal_cut <- function(cut, step = 0.01){
   }
   opt_cuts <- data.frame(Cutoff = cut, Accuracy = acc_opt)
   return(opt_cuts$Cutoff[opt_cuts$Accuracy == max(opt_cuts$Accuracy)])
+ #return(max(opt_cuts$Accuracy))
 }
-
+#acc <- sapply(c(0.75,0.8),optimal_cut)
+#
+#opt_cut_value <-
 opt_cut_value <- optimal_cut(0.80)
 ###############################################################################################################
 # This is our novel approach based on the optimal cut value given in above. It classifies the texts are
@@ -160,8 +163,8 @@ proposed_matcher <- function(train, dfA, dfB, cut_value){
   for(i in 1:n_train){
     # creating similarity matrix named as "sim_mat" show the calculated similarity values by using 
     # Jaro-Jinkler distance of the matched texts. 
-    sim_mat <-  data.frame(text_sim = stringsim(dfA[train$ltable_id[i] + 1, ],
-                                                dfB[train$rtable_id[i] + 1, ],
+    sim_mat <-  data.frame(text_sim = stringsim(dfA[train$ltable_id[i] + 1,2 ],
+                                                dfB[train$rtable_id[i] + 1, 2],
                                                 method = 'jw'))
     
     # there are some similar titles with different years. sor is a vector indicates that the papers 
@@ -171,7 +174,7 @@ proposed_matcher <- function(train, dfA, dfB, cut_value){
     # If the similarity value of a matched text is lower than 0.79, it is labeled as 0: not matched 
     # or else in the following if condition. The cut-value is 0.79 in the trained model. 
     # It is calculated 
-    if(sim_mat[2,] < cut_value){
+    if(sim_mat < cut_value){
       train$predicted[i] <- 0 # not matched
     }else
       train$predicted[i] <- 1 * sor # matched. Not matched when sor is 0.
@@ -194,11 +197,11 @@ for(i in 1:n_train){
 # predicting the labels of the valid set
 n_valid <- dim(valid)[1]
 for(i in 1:n_valid){
-  sim_mat <-  data.frame(text_sim = stringsim(dfA[valid$ltable_id[i] + 1,],
-                                              dfA[valid$rtable_id[i] + 1,],
+  sim_mat <-  data.frame(text_sim = stringsim(dfA[valid$ltable_id[i] + 1,2],
+                                              dfA[valid$rtable_id[i] + 1,2],
                                               method = 'jw'))
   sor <- (dfA[valid$ltable_id[i] + 1, "year"]) == (dfB[valid$rtable_id[i] + 1, "year"])
-  if(sim_mat[2,] < 0.79){
+  if(sim_mat < 0.79){
     valid$predicted[i] <- 0
   }else
     valid$predicted[i] <- 1 * sor
