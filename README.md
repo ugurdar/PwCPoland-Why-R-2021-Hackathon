@@ -7,5 +7,7 @@ cut-value is obtained by a search algorithm is "optimal_cut". It needs a initial
 statistics of the similarity values of true matched texts in train set. After obtained the optimal cut value, the proposed classifier proposed_matcher() function returns the labels of the texts considered to be similar. The accuracy and F1 score  for train set 
 of our proposed method are 0.9912 and 0.9946, respectively. 
 
-Please see our submission in [WhyR - PwC Hackathon.R](https://github.com/ugurdar/PwCPoland/blob/main/WhyR%20-%20PwC%20Hackathon.R). 
+Please see our submission in [WhyR - PwC Hackathon.R](https://github.com/ugurdar/PwCPoland/blob/main/WhyR%20-%20PwC%20Hackathon.R)
+and the our predictions in [valid-submission.csv](https://github.com/ugurdar/PwCPoland/blob/main/valid-submission.csv).
+
 
