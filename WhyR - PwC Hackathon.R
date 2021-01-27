@@ -159,9 +159,8 @@ optimal_cut <- function(cut, step = 0.01){
   return(opt_cuts$Cutoff[opt_cuts$Accuracy == max(opt_cuts$Accuracy)])
  #return(max(opt_cuts$Accuracy))
 }
-#acc <- sapply(c(0.75,0.8),optimal_cut)
-#
-#opt_cut_value <-
+#acc <- sapply(c(#cutoff interval#),optimal_cut)
+
 opt_cut_value <- optimal_cut(0.80)
 ###############################################################################################################
 # This is our novel approach based on the optimal cut value given in above. It classifies the texts are
