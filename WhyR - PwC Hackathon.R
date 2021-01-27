@@ -114,7 +114,7 @@ dfA   <- data.frame(doc_id = doc_id, text = textA, year = yearA)
 
 
 ###############################################################################################################
-# optimal_cut function returns the optimat cut-off value to maximize the accuracy.
+# optimal_cut function returns the optimal cut-off value to maximize the accuracy.
 # It searches the optimal cut-off value in the neighborhood of the specified value 
 # obtained from X.
 sim_vec <- NULL
